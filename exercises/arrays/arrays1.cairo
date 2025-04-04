@@ -2,12 +2,13 @@
 // The first element should be 0.
 // Make me compile and pass the test!
 
-// I AM NOT DONE
 
 fn create_array() -> Array<felt252> {
-    let a = ArrayTrait::new(); // something to change here...
-    a.append(1);
-    a
+    let mut a = ArrayTrait::new(); // something to change here...
+    a.append(0);
+    a.append(20);
+    a.append(90);
+    return a;
 }
 
 

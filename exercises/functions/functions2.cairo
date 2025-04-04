@@ -1,9 +1,8 @@
-// I AM NOT DONE
 
 fn main() {
     call_me(3);
 }
 
-fn call_me(num:) {
+fn call_me(num: felt252) {
     println!("num is {}", num);
 }

@@ -2,7 +2,6 @@
 // This should add OwnableComponent containing functionality which any contracts can include.
 // But something is fishy here as this component is not working, can you find the error and make the tests pass?
 
-// I AM NOT DONE
 
 use starknet::ContractAddress;
 
@@ -12,6 +11,7 @@ trait IOwnable<TContractState> {
     fn set_owner(ref self: TContractState, new_owner: ContractAddress);
 }
 
+#[starknet::component]
 mod OwnableComponent {
     use starknet::ContractAddress;
     use super::IOwnable;
@@ -20,6 +20,9 @@ mod OwnableComponent {
     struct Storage {
         owner: ContractAddress,
     }
+    #[event]
+    #[derive(Drop,starknet::Event)]
+    enum Event {}
 
     #[embeddable_as(Ownable)]
     impl OwnableImpl<
@@ -30,6 +33,15 @@ mod OwnableComponent {
         }
         fn set_owner(ref self: ComponentState<TContractState>, new_owner: ContractAddress) {
             self.owner.write(new_owner);
+        }
+    }
+
+    #[generate_trait]
+    impl InternalImpl<TContractState, +HasComponent<TContractState>> of InternalTrait<TContractState> {
+        fn assert_only_owner(self: @ComponentState<TContractState>) {
+            let caller = starknet::get_caller_address();
+            let owner = self.owner.read();
+            assert(caller == owner, 'Caller is not the owner'); 
         }
     }
 }
@@ -56,6 +68,12 @@ mod OwnableCounter {
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
     }
+    #[constructor]
+    fn constructor(ref self: ContractState) {
+        // Initialize with zero address or deployer address as needed
+        let zero_address: ContractAddress = starknet::contract_address_const::<0>();
+        self.ownable.owner.write(zero_address);
+    }
 }
 
 #[cfg(test)]
@@ -64,6 +82,9 @@ mod tests {
     use super::{IOwnableDispatcher, IOwnable, IOwnableDispatcherTrait};
     use starknet::contract_address_const;
     use starknet::syscalls::deploy_syscall;
+    use array::ArrayTrait;
+
+    const TEST_CLASS_HASH: felt252 = 0x123456;
 
     #[test]
     #[available_gas(200_000_000)]

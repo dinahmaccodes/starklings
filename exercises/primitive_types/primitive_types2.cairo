@@ -1,7 +1,6 @@
 // Fill in the rest of the line that has code missing!
 // No hints, there's no tricks, just get used to typing these :)
 
-// I AM NOT DONE
 
 fn main() {
     // A short string is a string whose length is at most 31 characters, and therefore can fit into a single field element.
@@ -21,14 +20,14 @@ fn main() {
         println!(" Neither alphabetic nor numeric!");
     }
 
-    let  // Finish this line like the example! What's your favorite short string?
+    let mut my_character = 'DC';// Finish this line like the example! What's your favorite short string?
     // Try a letter, try a number, try a special character, try a short string!
     if is_alphabetic(
-        ref your_character
+        ref my_character
     ) {
         println!(" Alphabetical !");
     } else if is_numeric(
-        ref your_character
+        ref my_character
     ) {
         println!(" Numerical!");
     } else {
